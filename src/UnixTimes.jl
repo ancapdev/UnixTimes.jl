@@ -5,13 +5,40 @@ using Dates
 export UnixTime
 export unix_now
 
-struct UnixTime
+struct UnixTime <: Dates.AbstractDateTime
     instant::Dates.UTInstant{Nanosecond}
+end
+
+function UnixTime(y, m = 0, h = 0, mi = 0, s = 0, ns = 0)
+    convert(UnixTime, DateTime(y, m, h, mi, s)) + Nanosecond(ns)
+end
+
+Dates.days(x::UnixTime) = Dates.days(convert(DateTime, x))
+Dates.hour(x::UnixTime) = mod(fld(Dates.value(x), 3600_000_000_000), 24)
+Dates.minute(x::UnixTime) = mod(fld(Dates.value(x), 60_000_000_000), 60)
+Dates.second(x::UnixTime) = mod(fld(Dates.value(x), 1_000_000_000), 60)
+Dates.millisecond(x::UnixTime) = mod(fld(Dates.value(x), 1_000_000), 1000)
+Dates.microsecond(x::UnixTime) = mod(fld(Dates.value(x), 1_000), 1000)
+Dates.nanosecond(x::UnixTime) = mod(Dates.value(x), 1_000)
+
+Base.:+(x::UnixTime, p::Period) =
+    UnixTime(Dates.UTInstant(x.instant.periods + Nanosecond(Dates.tons(p))))
+
+Base.:-(x::UnixTime, p::Period) = x + (-p)
+
+function Base.:+(x::UnixTime, p::Union{Month, Year})
+    trunc_ns = mod(Dates.value(x), 1_000_000)
+    convert(UnixTime, convert(DateTime, x) + p) + Nanosecond(trunc_ns)
 end
 
 function Base.convert(::Type{DateTime}, x::UnixTime)
     instant_ms = Dates.UNIXEPOCH + div(x.instant.periods.value, 1_000_000)
     DateTime(Dates.UTM(instant_ms))
+end
+
+function Base.convert(::Type{UnixTime}, x::DateTime)
+    instant_ns = (Dates.value(x) - Dates.UNIXEPOCH) * 1_000_000
+    UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
 end
 
 function Base.show(io::IO, x::UnixTime)
