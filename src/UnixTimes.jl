@@ -9,8 +9,17 @@ struct UnixTime <: Dates.AbstractDateTime
     instant::Dates.UTInstant{Nanosecond}
 end
 
-function UnixTime(y, m = 0, h = 0, mi = 0, s = 0, ns = 0)
-    convert(UnixTime, DateTime(y, m, h, mi, s)) + Nanosecond(ns)
+function UnixTime(
+    y::Integer,
+    m::Integer = 1,
+    d::Integer = 1,
+    h::Integer = 0,
+    mi::Integer = 0,
+    s::Integer = 0,
+    ms::Integer = 0,
+    us::Integer = 0,
+    ns::Integer = 0)
+    convert(UnixTime, DateTime(y, m, d, h, mi, s, ms)) + Nanosecond(us * 1000 + ns)
 end
 
 Dates.days(x::UnixTime) = Dates.days(convert(DateTime, x))
