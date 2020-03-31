@@ -62,4 +62,12 @@ end
     @test UnixTime(2020, 1, 1, 10) - UnixTime(2020, 1, 1, 9) == Nanosecond(60 * 60 * 1_000_000_000)
 end
 
+@testset "now" begin
+    @test unix_now() isa UnixTime
+    t1 = unix_now()
+    sleep(Millisecond(100))
+    t2 = unix_now()
+    @test t2 > t1
+end
+
 end
