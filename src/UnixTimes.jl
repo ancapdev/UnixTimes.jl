@@ -62,9 +62,22 @@ function Base.show(io::IO, x::UnixTime)
     nothing
 end
 
-function unix_now()
-    tv = Libc.TimeVal()
-    UnixTime(Dates.UTInstant(Nanosecond(tv.sec * 1_000_000_000 + tv.usec * 1_000)))
+if Sys.islinux()
+    struct LinuxTimespec
+        seconds::Clong
+        nanoseconds::Cuint
+    end
+    @inline function unix_now()
+        ts = Ref{LinuxTimespec}()
+        ccall(:clock_gettime, Cint, (Cint, Ref{LinuxTimespec}), 0, ts)
+        x = ts[]
+        UnixTime(Dates.UTInstant(Nanosecond(x.seconds * 1_000_000_000 + x.nanoseconds)))
+    end
+else
+    @inline function unix_now()
+        tv = Libc.TimeVal()
+        UnixTime(Dates.UTInstant(Nanosecond(tv.sec * 1_000_000_000 + tv.usec * 1_000)))
+    end
 end
 
 end
