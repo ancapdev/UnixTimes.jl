@@ -45,6 +45,8 @@ function Base.convert(::Type{DateTime}, x::UnixTime)
     DateTime(Dates.UTM(instant_ms))
 end
 
+Base.convert(::Type{Date}, x::UnixTime) = Date(DateTime(x))
+
 function Base.convert(::Type{UnixTime}, x::DateTime)
     instant_ns = (Dates.value(x) - Dates.UNIXEPOCH) * 1_000_000
     UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
