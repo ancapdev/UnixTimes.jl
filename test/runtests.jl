@@ -62,6 +62,13 @@ end
     @test UnixTime(2020, 1, 1, 10) - UnixTime(2020, 1, 1, 9) == Nanosecond(60 * 60 * 1_000_000_000)
 end
 
+@testset "rounding" begin
+    @test floor(UnixTime(2020, 1, 1, 9, 9, 9), Day(1)) == UnixTime(2020, 1, 1)
+    @test floor(UnixTime(2020, 1, 1, 9, 9, 9), Hour(1)) == UnixTime(2020, 1, 1, 9)
+    @test floor(UnixTime(2020, 1, 1, 9, 9, 9), Minute(1)) == UnixTime(2020, 1, 1, 9, 9)
+    @test floor(UnixTime(2020, 1, 1, 9, 9, 9), Second(5)) == UnixTime(2020, 1, 1, 9, 9, 5)
+end
+
 @testset "now" begin
     @test unix_now() isa UnixTime
     t1 = unix_now()

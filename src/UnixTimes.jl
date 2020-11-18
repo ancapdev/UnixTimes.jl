@@ -64,6 +64,10 @@ function Base.show(io::IO, x::UnixTime)
     nothing
 end
 
+function Base.floor(x::UnixTime, p::Union{DatePeriod, TimePeriod})
+    convert(UnixTime, floor(convert(DateTime, x), p))
+end
+
 if Sys.islinux()
     struct LinuxTimespec
         seconds::Clong
