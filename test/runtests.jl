@@ -1,5 +1,6 @@
 using UnixTimes
 using Dates
+using TimeZones
 using Test
 
 @testset "UnixTime" begin
@@ -75,6 +76,17 @@ end
     sleep(Millisecond(100))
     t2 = unix_now()
     @test t2 > t1
+end
+
+@testset "conversion" begin
+    @test UnixTime(DateTime(2020, 1, 2, 3)) == UnixTime(2020, 1, 2, 3)
+    @test DateTime(UnixTime(2020, 1, 2, 3)) == DateTime(2020, 1, 2, 3)
+    @test Date(UnixTime(2020, 1, 2, 3)) == Date(2020, 1, 2)
+    @test UnixTime(Date(2020, 1, 2)) == UnixTime(2020, 1, 2)
+    @test convert(UnixTime, DateTime(2020, 1, 2, 3)) == UnixTime(2020, 1, 2, 3)
+    @test convert(DateTime, UnixTime(2020, 1, 2, 3)) == DateTime(2020, 1, 2, 3)
+    @test UnixTime(ZonedDateTime(2020, 1, 2, 3, tz"UTC-4")) == UnixTime(2020, 1, 2, 7)
+    @test ZonedDateTime(UnixTime(2020, 1, 2, 7), tz"UTC-4") == ZonedDateTime(2020, 1, 2, 3, tz"UTC-4")
 end
 
 end
