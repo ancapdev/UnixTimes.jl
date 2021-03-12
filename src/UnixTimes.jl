@@ -5,6 +5,8 @@ using TimeZones
 
 export UnixTime
 export unix_now
+export UNIX_EPOCH
+
 
 struct UnixTime <: Dates.AbstractDateTime
     instant::Dates.UTInstant{Nanosecond}
@@ -22,6 +24,8 @@ function UnixTime(
     ns::Integer = 0)
     convert(UnixTime, DateTime(y, m, d, h, mi, s, ms)) + Nanosecond(us * 1000 + ns)
 end
+
+const UNIX_EPOCH = UnixTime(Dates.UTInstant(Nanosecond(0)))
 
 Dates.days(x::UnixTime) = Dates.days(convert(DateTime, x))
 Dates.hour(x::UnixTime) = mod(fld(Dates.value(x), 3600_000_000_000), 24)
@@ -47,6 +51,7 @@ function Dates.DateTime(x::UnixTime)
 end
 
 Dates.Date(x::UnixTime) = Date(DateTime(x))
+Dates.Time(x::UnixTime) = Time(Nanosecond(Dates.value(x)))
 
 Base.convert(::Type{DateTime}, x::UnixTime) = DateTime(x)
 

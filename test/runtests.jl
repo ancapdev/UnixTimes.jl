@@ -82,6 +82,7 @@ end
     @test UnixTime(DateTime(2020, 1, 2, 3)) == UnixTime(2020, 1, 2, 3)
     @test DateTime(UnixTime(2020, 1, 2, 3)) == DateTime(2020, 1, 2, 3)
     @test Date(UnixTime(2020, 1, 2, 3)) == Date(2020, 1, 2)
+    @test Time(UnixTime(2020, 1, 2, 3, 4, 5, 6, 7, 8)) == Time(3, 4, 5, 6, 7, 8)
     @test UnixTime(Date(2020, 1, 2)) == UnixTime(2020, 1, 2)
     @test convert(UnixTime, DateTime(2020, 1, 2, 3)) == UnixTime(2020, 1, 2, 3)
     @test convert(DateTime, UnixTime(2020, 1, 2, 3)) == DateTime(2020, 1, 2, 3)
