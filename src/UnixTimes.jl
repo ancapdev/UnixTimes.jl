@@ -5,6 +5,9 @@ using TimeZones
 
 export UnixTime
 export unix_now
+export UNIX_EPOCH
+
+const UNIX_EPOCH = UnixTIme(Dates.UTInstant(Nanosecond(0)))
 
 struct UnixTime <: Dates.AbstractDateTime
     instant::Dates.UTInstant{Nanosecond}
