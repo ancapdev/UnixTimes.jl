@@ -50,6 +50,7 @@ function Dates.DateTime(x::UnixTime)
 end
 
 Dates.Date(x::UnixTime) = Date(DateTime(x))
+Dates.Time(x::UnixTime) = Time(Nanosecond(Dates.value(x)))
 
 Base.convert(::Type{DateTime}, x::UnixTime) = DateTime(x)
 
