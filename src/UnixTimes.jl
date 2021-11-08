@@ -83,6 +83,9 @@ function Base.floor(x::UnixTime, p::Union{DatePeriod, TimePeriod})
     convert(UnixTime, floor(convert(DateTime, x), p))
 end
 
+Dates.default_format(::Type{UnixTime}) = nothing
+Dates.format(x::UnixTime, fmt::Nothing) = string(x)
+
 if Sys.islinux()
     struct LinuxTimespec
         seconds::Clong
