@@ -85,6 +85,9 @@ end
 
 Dates.guess(a::UnixTime, b::UnixTime, c) = guess(DateTime(a), DateTime(b), c)
 
+Dates.default_format(::Type{UnixTime}) = nothing
+Dates.format(x::UnixTime, fmt::Nothing) = string(x)
+
 if Sys.islinux()
     struct LinuxTimespec
         seconds::Clong
