@@ -61,6 +61,8 @@ function UnixTime(x::DateTime)
 end
 
 UnixTime(x::Date) = UnixTime(DateTime(x))
+UnixTime(x::Date, y::Time) =
+    UnixTime(year(x), month(x), day(x), hour(y), minute(y), second(y), millisecond(y), microsecond(y), nanosecond(y))
 
 Base.convert(::Type{UnixTime}, x::DateTime) = UnixTime(x)
 
