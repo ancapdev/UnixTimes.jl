@@ -1,7 +1,6 @@
 module UnixTimes
 
 using Dates
-using TimeZones
 
 export UnixTime
 export unix_now
@@ -65,9 +64,6 @@ UnixTime(x::Date, y::Time) =
     UnixTime(year(x), month(x), day(x), hour(y), minute(y), second(y), millisecond(y), microsecond(y), nanosecond(y))
 
 Base.convert(::Type{UnixTime}, x::DateTime) = UnixTime(x)
-
-UnixTime(x::ZonedDateTime) = UnixTime(DateTime(x, UTC))
-ZonedDateTime(x::UnixTime, tz::TimeZone) = ZonedDateTime(DateTime(x), tz; from_utc = true)
 
 function Base.show(io::IO, x::UnixTime)
     xdt = convert(DateTime, x)
