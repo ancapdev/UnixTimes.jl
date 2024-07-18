@@ -91,4 +91,11 @@ end
     @test ZonedDateTime(UnixTime(2020, 1, 2, 7), tz"UTC-4") == ZonedDateTime(2020, 1, 2, 3, tz"UTC-4")
 end
 
+@testset "collect" begin
+    t1 = UnixTime(2024,7,18,10,0,0)
+    t2 = UnixTime(2024,7,18,10,0,10)
+    p = Millisecond(100)
+    @test collect(t1:p:t2) isa Vector
+end
+
 end
