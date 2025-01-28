@@ -66,9 +66,14 @@ UnixTime(x::Date, y::Time) =
 const DATEFORMAT = dateformat"yyyy-mm-ddTHH:MM:SS.sss"
 
 function UnixTime(s::AbstractString)
-    dt = DateTime(chop(s; tail=6), DATEFORMAT)
-    ns = Nanosecond(parse(Int, last(s, 6)))
-    UnixTime(dt) + ns
+    try
+        @assert length(s) == 29
+        dt = DateTime(chop(s; tail=6), DATEFORMAT)
+        ns = Nanosecond(parse(Int, last(s, 6)))
+        UnixTime(dt) + ns
+    catch
+        throw(ArgumentError("Invalid UnixTime string"))
+    end
 end
 
 Base.convert(::Type{UnixTime}, x::DateTime) = UnixTime(x)

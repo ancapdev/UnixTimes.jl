@@ -48,6 +48,9 @@ end
     x = UnixTime(2020, 1, 2, 3, 4, 5, 6, 7, 8)
     @test string(x) == "2020-01-02T03:04:05.006007008"
     @test UnixTime(string(x)) == x
+    @test_throws ArgumentError UnixTime("2025-01-28T15:49:36.5901397023")
+    @test_throws ArgumentError UnixTime("2025-01-28T15:49:36.59013970")
+    @test_throws ArgumentError UnixTime(repeat("a", 29))
 end
 
 @testset "arithmetic" begin
