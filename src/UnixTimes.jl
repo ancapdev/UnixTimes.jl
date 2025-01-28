@@ -63,11 +63,19 @@ UnixTime(x::Date) = UnixTime(DateTime(x))
 UnixTime(x::Date, y::Time) =
     UnixTime(year(x), month(x), day(x), hour(y), minute(y), second(y), millisecond(y), microsecond(y), nanosecond(y))
 
+const DATEFORMAT = dateformat"yyyy-mm-ddTHH:MM:SS.sss"
+
+function UnixTime(s::AbstractString)
+    dt = DateTime(chop(s; tail=6), DATEFORMAT)
+    ns = Nanosecond(parse(Int, last(s, 6)))
+    UnixTime(dt) + ns
+end
+
 Base.convert(::Type{UnixTime}, x::DateTime) = UnixTime(x)
 
 function Base.show(io::IO, x::UnixTime)
     xdt = convert(DateTime, x)
-    print(io, Dates.format(xdt, dateformat"yyyy-mm-ddTHH:MM:SS.sss"))
+    print(io, Dates.format(xdt, DATEFORMAT))
     v = x.instant.periods.value
     d = 100_000
     for i in 1:6

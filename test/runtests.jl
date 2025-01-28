@@ -47,6 +47,7 @@ end
 @testset "io" begin
     x = UnixTime(2020, 1, 2, 3, 4, 5, 6, 7, 8)
     @test string(x) == "2020-01-02T03:04:05.006007008"
+    @test UnixTime(string(x)) == x
 end
 
 @testset "arithmetic" begin
