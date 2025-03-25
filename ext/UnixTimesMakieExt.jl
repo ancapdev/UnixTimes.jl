@@ -30,7 +30,7 @@ function Makie.convert_dim_value(conversion::UnixTimeConversion, values::Abstrac
 end
 
 function Makie.convert_dim_observable(conversion::UnixTimeConversion, values::Observable, deregister)
-    conversion.custom_epoch[] = min(conversion.custom_epoch[], first(values[]))
+    conversion.custom_epoch[] = max(conversion.custom_epoch[], last(values[]))
     result = map(values, conversion.custom_epoch) do vs, ep
         Dates.value.(vs .- ep)
     end
