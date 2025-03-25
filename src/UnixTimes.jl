@@ -54,10 +54,7 @@ Dates.Time(x::UnixTime) = Time(Nanosecond(Dates.value(x)))
 
 Base.convert(::Type{DateTime}, x::UnixTime) = DateTime(x)
 
-function UnixTime(x::DateTime)
-    instant_ns = (Dates.value(x) - Dates.UNIXEPOCH) * 1_000_000
-    UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
-end
+UnixTime(x::Dates.TimeType) = convert(UnixTime, x)
 
 UnixTime(x::Date) = UnixTime(DateTime(x))
 UnixTime(x::Date, y::Time) =
@@ -76,7 +73,10 @@ function UnixTime(s::AbstractString)
     end
 end
 
-Base.convert(::Type{UnixTime}, x::DateTime) = UnixTime(x)
+function Base.convert(::Type{UnixTime}, x::DateTime)
+    instant_ns = (Dates.value(x) - Dates.UNIXEPOCH) * 1_000_000
+    UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
+end
 
 function Base.show(io::IO, x::UnixTime)
     xdt = convert(DateTime, x)
@@ -94,7 +94,7 @@ function Base.floor(x::UnixTime, p::Union{DatePeriod, TimePeriod})
     convert(UnixTime, floor(convert(DateTime, x), p))
 end
 
-Dates.guess(a::UnixTime, b::UnixTime, c) = Dates.guess(DateTime(a), DateTime(b), c)
+Dates.guess(a::UnixTime, b::UnixTime, c) = (Dates.value(b) - Dates.value(a)) ÷ Dates.tons(c)
 
 Dates.default_format(::Type{UnixTime}) = nothing
 Dates.format(x::UnixTime, fmt::Nothing) = string(x)
