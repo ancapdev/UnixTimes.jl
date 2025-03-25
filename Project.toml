@@ -5,18 +5,19 @@ version = "1.5.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-PlotUtils = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 
 [weakdeps]
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
-MakieCore = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
+Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
 TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 
 [extensions]
-UnixTimesMakieExt = ["Makie", "MakieCore"]
+UnixTimesMakieExt = ["Makie", "Observables"]
 UnixTimesTimeZonesExt = "TimeZones"
 
 [compat]
+Makie = "0.22"
+Observables = "0.5"
 TimeZones = "1"
 julia = "1.9"
 
