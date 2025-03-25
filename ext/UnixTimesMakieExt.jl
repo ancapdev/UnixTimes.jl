@@ -6,14 +6,14 @@ using Observables
 using Dates
 
 struct UnixTimeConversion <: Makie.AbstractDimConversion
-    custom_epoch::Observable{UnixTime}
-    function UnixTimeConversion(custom_epoch=UnixTime(Date(2025, 01, 01)))
-        new(Observable{UnixTime}(custom_epoch; ignore_equal_values=true))
+    custom_epoch::Observable{Union{Nothing, UnixTime}}
+    function UnixTimeConversion(custom_epoch = nothing)
+        new(Observable{Union{Nothing, UnixTime}}(custom_epoch; ignore_equal_values=true))
     end
 end
 
 function number_to_unixtime(conversion::UnixTimeConversion, i)
-    Nanosecond(round(Int64, Float64(i))) + conversion.custom_epoch[]
+    Nanosecond(round(Int64, Float64(i))) + something(conversion.custom_epoch[], UNIX_EPOCH)
 end
 
 Makie.needs_tick_update_observable(conversion::UnixTimeConversion) = nothing
@@ -23,16 +23,19 @@ Makie.MakieCore.should_dim_convert(::Type{UnixTime}) = true
 Makie.create_dim_conversion(::Type{UnixTime}) = UnixTimeConversion()
 
 function Makie.convert_dim_value(conversion::UnixTimeConversion, value::UnixTime)
-    Dates.value(value - conversion.custom_epoch[])
+    Dates.value(value - something(conversion.custom_epoch[], UNIX_EPOCH))
 end
 function Makie.convert_dim_value(conversion::UnixTimeConversion, values::AbstractArray{UnixTime})
-    Dates.value.(values .- conversion.custom_epoch[])
+    Dates.value.(values .- something(conversion.custom_epoch[], UNIX_EPOCH))
 end
 
 function Makie.convert_dim_observable(conversion::UnixTimeConversion, values::Observable, deregister)
-    conversion.custom_epoch[] = max(conversion.custom_epoch[], last(values[]))
+    if conversion.custom_epoch[] === nothing
+        conversion.custom_epoch[] = last(values[])
+    end
+
     result = map(values, conversion.custom_epoch) do vs, ep
-        Dates.value.(vs .- ep)
+        Dates.value.(vs .- something(ep, UNIX_EPOCH))
     end
     append!(deregister, result.inputs)
     result
