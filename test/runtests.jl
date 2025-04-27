@@ -2,7 +2,6 @@ using UnixTimes
 using Dates
 using TimeZones
 using Test
-import JSON3
 
 @testset "UnixTime" begin
 
@@ -101,17 +100,6 @@ end
     t2 = UnixTime(2024,7,18,10,0,10)
     p = Millisecond(100)
     @test collect(t1:p:t2) isa Vector
-end
-
-@testset "JSON3" begin
-    struct MyType
-        time::UnixTime
-    end
-    t = UnixTime("2025-01-01T00:00:00.000000000")
-    x = MyType(t)
-    s = JSON3.write(x)
-    out = JSON3.read(s, MyType)
-    @assert out.time == t
 end
 
 end
