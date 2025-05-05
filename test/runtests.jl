@@ -44,6 +44,10 @@ end
     @test convert(UnixTime, DateTime(2020, 1, 2, 3, 4, 5, 6)) == UnixTime(2020, 1, 2, 3, 4, 5, 6)
 end
 
+@testset "promotion" begin
+    @test UnixTime("2025-01-01T10:00:00.000000000") == DateTime("2025-01-01T10:00:00")
+end
+
 @testset "io" begin
     x = UnixTime(2020, 1, 2, 3, 4, 5, 6, 7, 8)
     @test string(x) == "2020-01-02T03:04:05.006007008"
