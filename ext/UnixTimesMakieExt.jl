@@ -18,7 +18,7 @@ end
 
 Makie.needs_tick_update_observable(conversion::UnixTimeConversion) = nothing
 
-Makie.MakieCore.should_dim_convert(::Type{UnixTime}) = true
+Makie.should_dim_convert(::Type{UnixTime}) = true
 
 Makie.create_dim_conversion(::Type{UnixTime}) = UnixTimeConversion()
 
