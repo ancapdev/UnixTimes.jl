@@ -1,7 +1,7 @@
 name = "UnixTimes"
 uuid = "ab1a18e7-b408-4913-896c-624bb82ed7f4"
 authors = ["Christian Rorvik <christian.rorvik@gmail.com>"]
-version = "1.7.0"
+version = "1.7.1"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -18,7 +18,7 @@ UnixTimesStructTypesExt = "StructTypes"
 UnixTimesTimeZonesExt = "TimeZones"
 
 [compat]
-Makie = "0.22"
+Makie = "0.22, 0.23, 0.24"
 Observables = "0.5"
 TimeZones = "1"
 julia = "1.9"
