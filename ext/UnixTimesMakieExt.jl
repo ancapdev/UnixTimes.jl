@@ -15,6 +15,9 @@ end
 function number_to_unixtime(conversion::UnixTimeConversion, i)
     Nanosecond(round(Int64, Float64(i))) + conversion.custom_epoch[]
 end
+function unixtime_to_number(conversion::UnixTimeConversion, value::UnixTime)
+    Dates.value(value - conversion.custom_epoch[])
+end
 
 Makie.expand_dimensions(::PointBased, y::AbstractVector{<:UnixTime}) = (keys(y), y)
 
@@ -25,13 +28,13 @@ Makie.should_dim_convert(::Type{UnixTime}) = true
 Makie.create_dim_conversion(::Type{UnixTime}) = UnixTimeConversion()
 
 function Makie.convert_dim_value(conversion::UnixTimeConversion, value::UnixTime)
-    Dates.value(value - conversion.custom_epoch[])
+    unixtime_to_number(conversion, value)
 end
 function Makie.convert_dim_value(conversion::UnixTimeConversion, values::AbstractArray{UnixTime})
-    Dates.value.(values .- conversion.custom_epoch[])
+    unixtime_to_number.(tuple(conversion), value)
 end
 function Makie.convert_dim_value(conversion::UnixTimeConversion, attr, values, prev_values)
-    Dates.value.(values .- conversion.custom_epoch[])
+    unixtime_to_number.(tuple(conversion), value)
 end
 
 function Makie.convert_dim_observable(conversion::UnixTimeConversion, values::Observable, deregister)
