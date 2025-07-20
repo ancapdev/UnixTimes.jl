@@ -21,7 +21,7 @@ end
 
 Makie.expand_dimensions(::PointBased, y::AbstractVector{<:UnixTime}) = (keys(y), y)
 
-Makie.needs_tick_update_observable(conversion::UnixTimeConversion) = nothing
+Makie.needs_tick_update_observable(conversion::UnixTimeConversion) = conversion.custom_epoch
 
 Makie.should_dim_convert(::Type{UnixTime}) = true
 
