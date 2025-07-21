@@ -31,10 +31,10 @@ function Makie.convert_dim_value(conversion::UnixTimeConversion, value::UnixTime
     unixtime_to_number(conversion, value)
 end
 function Makie.convert_dim_value(conversion::UnixTimeConversion, values::AbstractArray{UnixTime})
-    unixtime_to_number.(tuple(conversion), value)
+    unixtime_to_number.(tuple(conversion), values)
 end
 function Makie.convert_dim_value(conversion::UnixTimeConversion, attr, values, prev_values)
-    unixtime_to_number.(tuple(conversion), value)
+    unixtime_to_number.(tuple(conversion), values)
 end
 
 function Makie.convert_dim_observable(conversion::UnixTimeConversion, values::Observable, deregister)
