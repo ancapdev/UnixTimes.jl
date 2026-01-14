@@ -78,6 +78,9 @@ function Base.convert(::Type{UnixTime}, x::DateTime)
     UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
 end
 
+# Promotion rules for comparing UnixTime with DateTime
+Base.promote_rule(::Type{UnixTime}, ::Type{DateTime}) = UnixTime
+
 function Base.show(io::IO, x::UnixTime)
     xdt = convert(DateTime, x)
     print(io, Dates.format(xdt, DATEFORMAT))

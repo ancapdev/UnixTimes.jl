@@ -102,4 +102,15 @@ end
     @test collect(t1:p:t2) isa Vector
 end
 
+@testset "comparison with DateTime" begin
+    ut = UnixTime(2001, 03, 21, 13, 10, 0, 0)
+    dt = DateTime("2001-03-21T13:10:00")
+
+    @test ut == dt
+    @test ut > DateTime("2001-03-21T13:00:00")
+    @test ut < DateTime("2001-03-21T13:20:00")
+    @test DateTime("2001-03-21T13:20:00") > ut
+    @test UnixTime(2001, 03, 21, 13, 10, 0, 114, 549, 673) > dt
+end
+
 end
