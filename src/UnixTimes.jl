@@ -63,20 +63,43 @@ UnixTime(x::Date, y::Time) =
 const DATEFORMAT = dateformat"yyyy-mm-ddTHH:MM:SS.sss"
 
 function UnixTime(s::AbstractString)
-    try
-        @assert length(s) == 29
-        dt = DateTime(chop(s; tail=6), DATEFORMAT)
-        ns = Nanosecond(parse(Int, last(s, 6)))
-        UnixTime(dt) + ns
-    catch
-        throw(ArgumentError("Invalid UnixTime string"))
+    # Find the decimal point if it exists
+    dot_idx = findfirst('.', s)
+
+    # No fractional seconds, parse as DateTime
+    isnothing(dot_idx) && return UnixTime(DateTime(s, DATEFORMAT))
+
+    # Split into datetime and fractional parts
+    dt_part = @view s[1:(dot_idx - 1)]
+    frac_part = @view s[(dot_idx + 1):end]
+
+    # Parse the datetime part
+    dt = DateTime(dt_part, DATEFORMAT)
+
+    # Parse fractional seconds (can be 1-9 digits)
+    if isempty(frac_part) || !all(isdigit, frac_part)
+        throw(ArgumentError("Invalid fractional seconds in UnixTime string"))
     end
+
+    # Convert fractional seconds to nanoseconds
+    # Pad or truncate to 9 digits (nanosecond precision)
+    frac_digits = length(frac_part)
+    ns_value = if frac_digits <= 9
+        parse(Int, frac_part) * 10^(9 - frac_digits)
+    else
+        parse(Int, frac_part[1:9])
+    end
+
+    return UnixTime(dt) + Nanosecond(ns_value)
 end
 
 function Base.convert(::Type{UnixTime}, x::DateTime)
     instant_ns = (Dates.value(x) - Dates.UNIXEPOCH) * 1_000_000
     UnixTime(Dates.UTInstant(Nanosecond(instant_ns)))
 end
+
+# Promotion rules for comparing UnixTime with DateTime
+Base.promote_rule(::Type{UnixTime}, ::Type{DateTime}) = UnixTime
 
 function Base.show(io::IO, x::UnixTime)
     xdt = convert(DateTime, x)
