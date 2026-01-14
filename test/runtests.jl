@@ -48,9 +48,22 @@ end
     x = UnixTime(2020, 1, 2, 3, 4, 5, 6, 7, 8)
     @test string(x) == "2020-01-02T03:04:05.006007008"
     @test UnixTime(string(x)) == x
-    @test_throws ArgumentError UnixTime("2025-01-28T15:49:36.5901397023")
-    @test_throws ArgumentError UnixTime("2025-01-28T15:49:36.59013970")
-    @test_throws ArgumentError UnixTime(repeat("a", 29))
+
+    # Test various string formats
+    @test UnixTime("2020-01-02T03:04:05") == UnixTime(2020, 1, 2, 3, 4, 5)
+    @test UnixTime("2020-01-02T03:04:05.1") == UnixTime(2020, 1, 2, 3, 4, 5, 100)
+    @test UnixTime("2020-01-02T03:04:05.12") == UnixTime(2020, 1, 2, 3, 4, 5, 120)
+    @test UnixTime("2020-01-02T03:04:05.123") == UnixTime(2020, 1, 2, 3, 4, 5, 123)
+    @test UnixTime("2020-01-02T03:04:05.1234") == UnixTime(2020, 1, 2, 3, 4, 5, 123, 400)
+    @test UnixTime("2020-01-02T03:04:05.123456") == UnixTime(2020, 1, 2, 3, 4, 5, 123, 456)
+    @test UnixTime("2020-01-02T03:04:05.123456789") == UnixTime(2020, 1, 2, 3, 4, 5, 123, 456, 789)
+
+    # Test truncation of extra digits
+    @test UnixTime("2020-01-02T03:04:05.1234567890") == UnixTime(2020, 1, 2, 3, 4, 5, 123, 456, 789)
+
+    # Test invalid formats
+    @test_throws ArgumentError UnixTime("2020-01-02T03:04:05.")
+    @test_throws ArgumentError UnixTime("2020-01-02T03:04:05.abc")
 end
 
 @testset "arithmetic" begin
